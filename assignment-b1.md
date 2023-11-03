@@ -132,12 +132,13 @@ head(vancouver_trees)
     ## #   latitude <dbl>
 
 ``` r
-# In order to determine which street_side_name is popular, group_barchart function has been used to make a bar chart.
+# In order to determine which street_side_name is popular, group_barchart function has been used to make a bar chart.   
 group_barchart(vancouver_trees, street_side_name)
 ```
 
-![](assignment-b1_files/figure-gfm/unnamed-chunk-6-1.png)<!-- --> \###
-Exercise 4: Test the Function
+![](assignment-b1_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+### Exercise 4: Test the Function
 
 Three different test_that functions have been written in order to test
 the working of the function.
@@ -150,7 +151,7 @@ test_that("Plot returns ggplot object",{
 })
 ```
 
-    ## Test passed 😀
+    ## Test passed 🎉
 
 ``` r
 # Testing if the axis label is the same as column to be grouped
@@ -160,7 +161,7 @@ test_that("Scale is labelled 'cut'",{
 })
 ```
 
-    ## Test passed 😸
+    ## Test passed 🥳
 
 ``` r
 ## Testing if the plot is being printed
@@ -171,4 +172,4 @@ test_that("Printing ggplot object actually works",{
 
 ![](assignment-b1_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
-    ## Test passed 🎊
+    ## Test passed 😀

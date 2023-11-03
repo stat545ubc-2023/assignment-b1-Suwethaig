@@ -74,9 +74,10 @@ group_barchart(diamonds, cut)
 head(vancouver_trees)
 ```
 ```{r}
-# In order to determine which street_side_name is popular, group_barchart function has been used to make a bar chart.
+# In order to determine which street_side_name is popular, group_barchart function has been used to make a bar chart.   
 group_barchart(vancouver_trees, street_side_name)
 ```
+
 ### Exercise 4: Test the Function  
 
 
