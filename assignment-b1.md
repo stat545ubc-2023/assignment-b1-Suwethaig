@@ -1,9 +1,9 @@
-Mini Data Analysis Milestone 2
+Assignment B-1
 ================
 
-### Assignment B-1: Making a function
+### Making a function
 
-This document is a solution to questions states in the assignment. It
+This document is a solution to questions stated in the assignment. It
 covers making a function in R, documenting it, and testing it.
 
 ### Setup
@@ -27,7 +27,7 @@ library(tidyverse)
     ## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
 
 ``` r
-library(testthat)
+library(testthat) 
 ```
 
     ## 
@@ -53,34 +53,43 @@ library(testthat)
 
 A plotting function has been made as part of this exercise.
 
-1.  This function accepts a dataframe and grouping column as a
-    parameter.  
+1.  This function accepts a dataframe, grouping column, slicing number
+    as a parameter.  
 2.  It then groups the entities of the column and counts the number of
     entries in each group.  
-3.  The output is then plotted as a bar chart.
+3.  The output is then plotted as a bar chart, as per the slicing
+    number.
 
 ``` r
 #' Function to group and plot the count of a column
 #' 
-#' This function is used to group a column, count the number of entries per group and plot a bar graph.
+#' This function is used to group a column, count the number of entries per group and plot a bar graph with number of bars as specified by the user.  
 #' 
 #' @param data_frame The dataframe on which the function is to be applied.
 #' @param group_column The column of the dataframe which is to be grouped.
+#' @param num The number of top entries to be displayed in the bar chart.
 #' @returns A bar chart showing count of each grouped entity.
 #' @example group_barchart(diamond, cut)
 
 # Function that groups a column and plots the counted rows in each group
-group_barchart <- function(data_frame, group_variable,...){
+group_barchart <- function(data_frame, group_variable, num, ...){
   label <- rlang::englue("Number of entries for each {{group_variable}}")
   
+  if(!is.numeric(num)) {
+    stop('I am so sorry, but this function only works for numeric input!\n',
+         'You have provided an object of class: ', class(num)[1])
+  }
+  
   data_frame %>%
-  group_by({{group_variable}}) %>%
-  summarise(count = n()) %>%
-  arrange(desc({{group_variable}})) %>%
-  ggplot(mapping = aes(x = {{group_variable}}, y = count)) +
-  geom_bar(stat="identity") +
-  labs(title = label)
-}
+    group_by({{group_variable}}) %>%
+    summarise(count = n()) %>%
+    slice_max(count, n = num) %>%
+    ggplot(mapping = aes(x = {{group_variable}}, y = count, fill = {{group_variable}})) +
+    geom_bar(stat="identity") +
+    geom_text(aes(label=count), vjust=-0.3, size=3.5) +
+    labs(title = label)+
+    theme(plot.title = element_text(hjust=0.5))
+  }
 ```
 
 ### Exercise 3: Include examples
@@ -105,7 +114,7 @@ head(diamonds)
 
 ``` r
 # In order to determine which cut is popular, group_barchart function has been used to make a bar chart.
-group_barchart(diamonds, cut)
+group_barchart(diamonds, cut, 3)
 ```
 
 ![](assignment-b1_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
@@ -133,7 +142,7 @@ head(vancouver_trees)
 
 ``` r
 # In order to determine which street_side_name is popular, group_barchart function has been used to make a bar chart.   
-group_barchart(vancouver_trees, street_side_name)
+group_barchart(vancouver_trees, species_name, 5)
 ```
 
 ![](assignment-b1_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
@@ -146,18 +155,18 @@ the working of the function.
 ``` r
 # Testing if ggplot object is returned
 test_that("Plot returns ggplot object",{
-  p <- group_barchart(diamonds, cut)
-  expect_is(p,"ggplot")
+  chart_1 <- group_barchart(diamonds, cut, 2)
+  expect_is(chart_1,"ggplot")
 })
 ```
 
-    ## Test passed 🎉
+    ## Test passed 🥳
 
 ``` r
 # Testing if the axis label is the same as column to be grouped
-test_that("Scale is labelled 'cut'",{
-  p <- group_barchart(diamonds, cut)
-  expect_identical(p$labels$x, "cut")
+test_that("Scale is labelled 'species_name'",{
+  chart_2 <- group_barchart(vancouver_trees, species_name, 10)
+  expect_identical(chart_2$labels$x, "species_name")
 })
 ```
 
@@ -166,8 +175,8 @@ test_that("Scale is labelled 'cut'",{
 ``` r
 ## Testing if the plot is being printed
 test_that("Printing ggplot object actually works",{
-    p <- group_barchart(diamonds, cut)
-    expect_error(print(p), NA)})
+    chart_3 <- group_barchart(diamonds, cut, 5)
+    expect_error(print(chart_3), NA)})
 ```
 
 ![](assignment-b1_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
