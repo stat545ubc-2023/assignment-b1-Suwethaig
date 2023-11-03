@@ -1,0 +1,103 @@
+---
+title: "Mini Data Analysis Milestone 2"
+output: github_document
+---
+
+### Assignment B-1: Making a function  
+
+This document is a solution to questions states in the assignment. It covers making a function in R, documenting it, and testing it.  
+
+### Setup  
+
+Loading the required packages
+
+```{r}
+
+library(datateachr)
+library(tidyverse)
+library(testthat)
+
+```
+
+
+### Exercise 1 and 2: Make and Document your Function  
+
+A plotting function has been made as part of this exercise.  
+
+1. This function accepts a  dataframe and grouping column as a parameter.  
+2. It then groups the entities of the column and counts the number of entries in each group.  
+3. The output is then plotted as a bar chart.  
+```{r}
+#' Function to group and plot the count of a column
+#' 
+#' This function is used to group a column, count the number of entries per group and plot a bar graph.
+#' 
+#' @param data_frame The dataframe on which the function is to be applied.
+#' @param group_column The column of the dataframe which is to be grouped.
+#' @returns A bar chart showing count of each grouped entity.
+#' @example group_barchart(diamond, cut)
+
+# Function that groups a column and plots the counted rows in each group
+group_barchart <- function(data_frame, group_variable,...){
+  label <- rlang::englue("Number of entries for each {{group_variable}}")
+  
+  data_frame %>%
+  group_by({{group_variable}}) %>%
+  summarise(count = n()) %>%
+  arrange(desc({{group_variable}})) %>%
+  ggplot(mapping = aes(x = {{group_variable}}, y = count)) +
+  geom_bar(stat="identity") +
+  labs(title = label)
+}
+
+```
+
+
+### Exercise 3: Include examples  
+
+
+Examples of the function implementation have been shown below.  
+
+```{r}
+# First 6 rows of the diamond dataframe have been first analysed to choose the column to be grouped.
+
+head(diamonds)
+```
+
+```{r}
+# In order to determine which cut is popular, group_barchart function has been used to make a bar chart.
+group_barchart(diamonds, cut)
+```
+```{r}
+# First 6 rows of the vancouver_trees dataframe have been first analysed to choose the column to be grouped.
+
+head(vancouver_trees)
+```
+```{r}
+# In order to determine which street_side_name is popular, group_barchart function has been used to make a bar chart.
+group_barchart(vancouver_trees, street_side_name)
+```
+### Exercise 4: Test the Function  
+
+
+Three different test_that functions have been written in order to test the working of the function.  
+
+```{r}
+# Testing if ggplot object is returned
+test_that("Plot returns ggplot object",{
+  p <- group_barchart(diamonds, cut)
+  expect_is(p,"ggplot")
+})
+
+
+# Testing if the axis label is the same as column to be grouped
+test_that("Scale is labelled 'cut'",{
+  p <- group_barchart(diamonds, cut)
+  expect_identical(p$labels$x, "cut")
+})
+
+## Testing if the plot is being printed
+test_that("Printing ggplot object actually works",{
+    p <- group_barchart(diamonds, cut)
+    expect_error(print(p), NA)})
+```
